@@ -1,0 +1,17 @@
+**/node_modules
+**/.DS_Store
+*.zip
+src/package-lock.json
+yarn.lock
+**/.DS_Store
+**/package-lock.json
+**/public/*
+!/file-server/app/public/*.html
+
+.vscode/
+
+main-server/typings/
+
+main-server/.travis.yml
+
+main-server/appveyor.yml
