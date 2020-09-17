@@ -397,7 +397,7 @@ const defaultConfig = {
 };
 function setConfig(option) {
     Object.assign(defaultConfig, option);
-    const { projectId, userId, clientType } = defaultConfig;
+    const { projectId, userId, clientType, url } = defaultConfig;
     if (projectId) {
         setProject(projectId);
     }
@@ -406,6 +406,9 @@ function setConfig(option) {
     }
     if (clientType) {
         setClientType(clientType);
+    }
+    if (url) {
+        trigger("changeUrl", url);
     }
     if (clientType) {
         defaultConfig.clientType = clientType;
