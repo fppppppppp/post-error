@@ -338,7 +338,7 @@ function trigger(type, ...money) {
         return false;
     }
     fns.forEach((fn) => {
-        fn.apply(this, ...money);
+        fn.apply(this, money);
     });
 }
 

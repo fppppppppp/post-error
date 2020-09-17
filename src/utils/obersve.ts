@@ -12,7 +12,7 @@ function trigger(type: string, ...money: any) {
     return false;
   }
   fns.forEach((fn: Function) => {
-    fn.apply(this, ...money);
+    fn.apply(this, money);
   });
 }
 
