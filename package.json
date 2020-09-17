@@ -1,16 +1,16 @@
 {
   "name": "post-error",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "异常监控",
   "private": false,
   "main": "index.js",
   "module": "esm/index.js",
-  "repository":{
-    "type":"git",
-    "url":"https://github.com/fppppppppp/post-error.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fppppppppp/post-error.git"
   },
   "homepage": "https://github.com/fppppppppp/post-error/blob/master/README.md",
-  "bugs":"https://github.com/fppppppppp/post-error/issues",
+  "bugs": "https://github.com/fppppppppp/post-error/issues",
   "scripts": {
     "start": "webpack-dev-server --inline --progress --config ./build/webpack.dev.js --prod 9999 --open",
     "build": "run-s build:dist build:esm build:bundle",
