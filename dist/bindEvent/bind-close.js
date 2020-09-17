@@ -1,5 +1,5 @@
-import { servicePath } from "../config/config";
 import { getUserInfo } from "../userinfo/index";
+import { postCloseData } from "../service/xhm";
 function getCloseInfo() {
     const systeminfo = getUserInfo();
     const { uid } = systeminfo;
@@ -10,8 +10,7 @@ let isPost = false;
 function postData() {
     if (!isPost) {
         let fb = getCloseInfo();
-        let url = servicePath + "cl";
-        navigator.sendBeacon(url, fb);
+        postCloseData(fb);
         isPost = true;
     }
 }

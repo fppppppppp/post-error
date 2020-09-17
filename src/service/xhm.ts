@@ -1,11 +1,19 @@
 
 import { servicePath } from "../config/config";
-import { getConfig,ConfigOption } from "../config/global-config";
 import { getUserInfo,UserInfo } from "../userinfo/index";
+import { listen } from "../utils/obersve";
+
+
+let serviceUrl = servicePath;
+listen("changeUrl",(path)=>{
+    serviceUrl = path ;
+})
+
+
 const gifPostApi = function(option: object,type = "er"){
     const gif = document.createElement("img");
     const postOption = createUrl({...option,_te:type});
-    const path = servicePath+ "pr/e.gif"+postOption;
+    const path = serviceUrl+ "pr/e.gif"+postOption;
     gif.src = path;
 };
 
@@ -43,6 +51,10 @@ function createUrl(info){
     return "?"+arr.join("&");
 }
 
+export const postCloseData = function(fb){
+    let url = serviceUrl+"cl";
+    navigator.sendBeacon(url, fb);
+}
 
 export const xhm = gifPostApi;
 export const postError = function(option: object){

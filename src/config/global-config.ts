@@ -8,12 +8,12 @@ const  defaultConfig: ConfigOption = {
     delay : 1000,
     mergeReport : true,
     random: 1,
-    repeat:20,
+    repeat:20
 }
 
 export  function setConfig(option: ConfigOption): void{
     Object.assign(defaultConfig,option);
-    const {projectId, userId, clientType} = defaultConfig;
+    const { projectId, userId, clientType} = defaultConfig;
     if(projectId){
         setProject(projectId);
     }

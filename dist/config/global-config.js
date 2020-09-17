@@ -7,7 +7,7 @@ const defaultConfig = {
     delay: 1000,
     mergeReport: true,
     random: 1,
-    repeat: 20,
+    repeat: 20
 };
 export function setConfig(option) {
     Object.assign(defaultConfig, option);

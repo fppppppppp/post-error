@@ -324,10 +324,32 @@ function getSystemInfo (){
 	};
 }
 
+const clientList = {};
+function listen(key, fn) {
+    if (!clientList[key]) {
+        clientList[key] = [];
+    }
+    clientList[key].push(fn); // 订阅的消息添加进缓存列表
+}
+function trigger(type, ...money) {
+    let fns = clientList[type];
+    if (!fns || fns.length === 0) {
+        // 如果没有绑定对应的消息
+        return false;
+    }
+    fns.forEach((fn) => {
+        fn.apply(this, ...money);
+    });
+}
+
+let serviceUrl = servicePath;
+listen("changeUrl", (path) => {
+    serviceUrl = path;
+});
 const gifPostApi = function (option, type = "er") {
     const gif = document.createElement("img");
     const postOption = createUrl(Object.assign(Object.assign({}, option), { _te: type }));
-    const path = servicePath + "pr/e.gif" + postOption;
+    const path = serviceUrl + "pr/e.gif" + postOption;
     gif.src = path;
 };
 function getPostInfo() {
@@ -357,6 +379,10 @@ function createUrl(info) {
     arr.push("_t=" + +new Date());
     return "?" + arr.join("&");
 }
+const postCloseData = function (fb) {
+    let url = serviceUrl + "cl";
+    navigator.sendBeacon(url, fb);
+};
 const xhm = gifPostApi;
 const postError = function (option) {
     gifPostApi(option, "er");
@@ -367,7 +393,7 @@ const defaultConfig = {
     delay: 1000,
     mergeReport: true,
     random: 1,
-    repeat: 20,
+    repeat: 20
 };
 function setConfig(option) {
     Object.assign(defaultConfig, option);
@@ -408,8 +434,7 @@ let isPost = false;
 function postData() {
     if (!isPost) {
         let fb = getCloseInfo();
-        let url = servicePath + "cl";
-        navigator.sendBeacon(url, fb);
+        postCloseData(fb);
         isPost = true;
     }
 }
@@ -445,24 +470,6 @@ function setCacheToMax(key, value, repeat = -1) {
         setCache(key, value);
         return Object.assign(Object.assign({}, cacheObj[key]), { length: cacheObj[key].length });
     }
-}
-
-const clientList = {};
-function listen(key, fn) {
-    if (!clientList[key]) {
-        clientList[key] = [];
-    }
-    clientList[key].push(fn); // 订阅的消息添加进缓存列表
-}
-function trigger(type, ...money) {
-    let fns = clientList[type];
-    if (!fns || fns.length === 0) {
-        // 如果没有绑定对应的消息
-        return false;
-    }
-    fns.forEach((fn) => {
-        fn.apply(this, ...money);
-    });
 }
 
 // 定时器 定时发送数据
