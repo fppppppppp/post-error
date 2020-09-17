@@ -3,6 +3,7 @@ import { servicePath } from "./config";
 import { setProject,setSystemUser,getUserInfo, UserInfo ,setClientType} from "../userinfo/index";
 import { getSystemInfo } from "../utils/os-browser";
 import { xhm } from '../service/xhm';
+import { trigger }  from "../utils/obersve";
 const  defaultConfig: ConfigOption = {
     url: servicePath,
     delay : 1000,
@@ -13,7 +14,7 @@ const  defaultConfig: ConfigOption = {
 
 export  function setConfig(option: ConfigOption): void{
     Object.assign(defaultConfig,option);
-    const { projectId, userId, clientType} = defaultConfig;
+    const { projectId, userId, clientType,url} = defaultConfig;
     if(projectId){
         setProject(projectId);
     }
@@ -21,7 +22,10 @@ export  function setConfig(option: ConfigOption): void{
         setSystemUser(userId);
     }
     if(clientType){
-        setClientType(clientType)
+        setClientType(clientType);
+    }
+    if(url){
+        trigger("changeUrl",url);
     }
     if(clientType){
         defaultConfig.clientType = clientType;
