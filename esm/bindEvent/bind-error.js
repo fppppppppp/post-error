@@ -6,7 +6,7 @@ function bindError() {
         if (msg === "Script error." || !url) {
             return;
         }
-        pushErrorInfo(e);
+        pushErrorInfo(e, "", lineNo, columnNo);
     };
 }
 function bindUnhandelrejectionEvt() {

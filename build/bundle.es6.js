@@ -355,10 +355,12 @@ const gifPostApi = function (option, type = "er") {
 function getPostInfo() {
     let userinfo = getUserInfo();
     const { userid, uid, projectInfo, clientType } = userinfo;
+    const { href } = window.location;
     let option = {
         _uu: uid,
         _ct: clientType,
         _p: projectInfo,
+        _fm: href,
     };
     if (userid) {
         option._uid = userid;
@@ -372,9 +374,9 @@ function createUrl(info) {
     for (let i in op) {
         let value = op[i];
         if (typeof value === "object") {
-            value = JSON.stringify(value);
+            value = encodeURIComponent(JSON.stringify(value));
         }
-        arr.push(`${i}=${value}`);
+        arr.push(`${i}=${encodeURIComponent(value)}`);
     }
     arr.push("_t=" + +new Date());
     return "?" + arr.join("&");
@@ -475,6 +477,30 @@ function setCacheToMax(key, value, repeat = -1) {
     }
 }
 
+const getStackLineCol = function (stack) {
+    if (!stack || typeof stack !== "string") {
+        return null;
+    }
+    try {
+        const arr = stack.split('\n');
+        const errormsg = arr[1];
+        if (!errormsg)
+            return null;
+        const linecol = errormsg.split(":");
+        if (linecol.length < 2)
+            return null;
+        const line = linecol[linecol.length - 2];
+        const col = linecol[linecol.length - 1];
+        return {
+            line: line,
+            col: col
+        };
+    }
+    catch (e) {
+        throw e;
+    }
+};
+
 // 定时器 定时发送数据
 let timer = null;
 // 定义一个数组存放错误数据;
@@ -484,10 +510,17 @@ function needMax() {
     const { repeat } = config;
     return typeof repeat === "number" && repeat > 0 ? repeat : -1;
 }
-function pushErrorInfo(e, str = "") {
+function pushErrorInfo(e, str = "", line, col) {
     const errStr = e + str;
     const { name, message, stack } = e;
     const errorType = e.constructor && e.constructor.name || "unkonw";
+    if (!line || !col) {
+        const linecol = getStackLineCol(stack);
+        if (linecol) {
+            line = linecol.line * 1;
+            col = linecol.col * 1;
+        }
+    }
     let value = {
         name,
         message,
@@ -495,6 +528,8 @@ function pushErrorInfo(e, str = "") {
         errStr,
         errorType,
         time: +new Date(),
+        line,
+        col
     };
     const pushInfo = setCacheToMax(errStr, value, needMax());
     if (pushInfo) {
@@ -563,7 +598,7 @@ function bindError() {
         if (msg === "Script error." || !url) {
             return;
         }
-        pushErrorInfo(e);
+        pushErrorInfo(e, "", lineNo, columnNo);
     };
 }
 function bindUnhandelrejectionEvt() {

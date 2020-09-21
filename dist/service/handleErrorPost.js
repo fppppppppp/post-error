@@ -2,6 +2,7 @@ import { postError } from "./xhm";
 import { setCacheToMax } from "./cacheInfo";
 import { getConfig } from "../config/global-config";
 import { listen, trigger } from "../utils/obersve";
+import { getStackLineCol } from "../utils/error-stack";
 // 定时器 定时发送数据
 let timer = null;
 // 定义一个数组存放错误数据;
@@ -11,10 +12,17 @@ function needMax() {
     const { repeat } = config;
     return typeof repeat === "number" && repeat > 0 ? repeat : -1;
 }
-export function pushErrorInfo(e, str = "") {
+export function pushErrorInfo(e, str = "", line, col) {
     const errStr = e + str;
     const { name, message, stack } = e;
     const errorType = e.constructor && e.constructor.name || "unkonw";
+    if (!line || !col) {
+        const linecol = getStackLineCol(stack);
+        if (linecol) {
+            line = linecol.line * 1;
+            col = linecol.col * 1;
+        }
+    }
     let value = {
         name,
         message,
@@ -22,6 +30,8 @@ export function pushErrorInfo(e, str = "") {
         errStr,
         errorType,
         time: +new Date(),
+        line,
+        col
     };
     const pushInfo = setCacheToMax(errStr, value, needMax());
     if (pushInfo) {

@@ -21,14 +21,17 @@ function getPostInfo(): {
     _uu: string;
     _ct: string;
     _p: string;
-    _uid: string;
+    _uid?: string;
+    _fo: string;
 }{
     let userinfo:UserInfo = getUserInfo();
     const { userid , uid, projectInfo,clientType} = userinfo;
+    const { href }  = window.location;
     let option: any = {
         _uu:uid,
         _ct:clientType,
         _p:projectInfo,
+        _fm:href,
     }
     if(userid){
         option._uid = userid;
@@ -43,9 +46,9 @@ function createUrl(info){
     for( let i in op ){
         let value = op[i];
         if(typeof value === "object"){
-            value = JSON.stringify(value);
+            value = encodeURIComponent(JSON.stringify(value));
         }
-        arr.push(`${i}=${value}`)
+        arr.push(`${i}=${encodeURIComponent(value)}`)
     }
     arr.push("_t="+  +new Date())
     return "?"+arr.join("&");

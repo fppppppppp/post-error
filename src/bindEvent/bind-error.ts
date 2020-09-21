@@ -4,13 +4,12 @@ import { pushErrorInfo }  from "../service/handleErrorPost";
 import { NetworkRequestError ,UnhandledrejectionNotObjectError}  from "../error-types";
 import { fill } from "../utils/object";
 
-
 function bindError(){
   window.onerror=function(msg,url,lineNo,columnNo,e){
     if(msg==="Script error." || !url){
       return
     }
-    pushErrorInfo(e);
+    pushErrorInfo(e,"",lineNo,columnNo);
   }
 }
 

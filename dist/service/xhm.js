@@ -14,10 +14,12 @@ const gifPostApi = function (option, type = "er") {
 function getPostInfo() {
     let userinfo = getUserInfo();
     const { userid, uid, projectInfo, clientType } = userinfo;
+    const { href } = window.location;
     let option = {
         _uu: uid,
         _ct: clientType,
         _p: projectInfo,
+        _fm: href,
     };
     if (userid) {
         option._uid = userid;
@@ -31,9 +33,9 @@ function createUrl(info) {
     for (let i in op) {
         let value = op[i];
         if (typeof value === "object") {
-            value = JSON.stringify(value);
+            value = encodeURIComponent(JSON.stringify(value));
         }
-        arr.push(`${i}=${value}`);
+        arr.push(`${i}=${encodeURIComponent(value)}`);
     }
     arr.push("_t=" + +new Date());
     return "?" + arr.join("&");

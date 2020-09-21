@@ -2,6 +2,8 @@ import { postError, xhm } from "./xhm";
 import { setCacheToMax } from "./cacheInfo";
 import { getConfig, ConfigOption } from "../config/global-config";
 import { listen, trigger, remove } from "../utils/obersve";
+import { getStackLineCol }  from "../utils/error-stack";
+
 // 定时器 定时发送数据
 let timer = null;
 
@@ -13,10 +15,17 @@ function needMax(): number {
   return typeof repeat === "number" && repeat > 0 ? repeat : -1;
 }
 
-export function pushErrorInfo(e?: Error, str: string = "") {
+export function pushErrorInfo(e?: Error, str: string = "",line?:number,col?:number) {
   const errStr = e + str;
   const { name, message, stack } = e;
   const errorType =e.constructor &&  e.constructor.name || "unkonw";
+  if(!line || !col){
+    const linecol =  getStackLineCol(stack);
+    if(linecol){
+      line = (linecol.line as any) * 1;
+      col = (linecol.col as any) * 1;
+    }
+  }
   let value = {
     name,
     message,
@@ -24,6 +33,8 @@ export function pushErrorInfo(e?: Error, str: string = "") {
     errStr,
     errorType,
     time: +new Date(),
+    line,
+    col
   };
   const pushInfo = setCacheToMax(errStr, value, needMax());
   if (pushInfo) {
