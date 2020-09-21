@@ -15,7 +15,7 @@ function needMax() {
 export function pushErrorInfo(e, str = "", line, col) {
     const errStr = e + str;
     const { name, message, stack } = e;
-    const errorType = e.constructor && e.constructor.name || "unkonw";
+    const errorType = e._errorName || e.constructor && e.constructor.name || "unkonw";
     if (!line || !col) {
         const linecol = getStackLineCol(stack);
         if (linecol) {

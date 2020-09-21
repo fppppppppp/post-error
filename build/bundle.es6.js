@@ -513,7 +513,7 @@ function needMax() {
 function pushErrorInfo(e, str = "", line, col) {
     const errStr = e + str;
     const { name, message, stack } = e;
-    const errorType = e.constructor && e.constructor.name || "unkonw";
+    const errorType = e._errorName || e.constructor && e.constructor.name || "unkonw";
     if (!line || !col) {
         const linecol = getStackLineCol(stack);
         if (linecol) {
@@ -589,8 +589,16 @@ class CustomError extends Error {
     }
 }
 class NetworkRequestError extends CustomError {
+    constructor(message, type) {
+        super(message, type);
+        this._errorName = "NetworkRequestError";
+    }
 }
 class UnhandledrejectionNotObjectError extends CustomError {
+    constructor(message, type) {
+        super(message, type);
+        this._errorName = "UnhandledrejectionNotObjectError";
+    }
 }
 
 function bindError() {

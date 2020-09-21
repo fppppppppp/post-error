@@ -3,6 +3,7 @@ export const getStackLineCol = function(stack){
     return null
   }
   try{
+    stack = stack.replace( /\(|\)/g , "");
     const arr = stack.split('\n');
     const errormsg = arr[1];
     if(!errormsg)return null;
