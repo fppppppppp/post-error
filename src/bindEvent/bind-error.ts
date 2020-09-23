@@ -1,5 +1,4 @@
-import { servicePath } from "../config/config";
-import { getUserInfo,UserInfo } from "../userinfo/index";
+
 import { pushErrorInfo }  from "../service/handleErrorPost";
 import { NetworkRequestError ,UnhandledrejectionNotObjectError}  from "../error-types";
 import { fill } from "../utils/object";
@@ -9,7 +8,7 @@ function bindError(){
     if(msg==="Script error." || !url){
       return
     }
-    pushErrorInfo(e,"",lineNo,columnNo);
+    pushErrorInfo(e,"",{line:lineNo,col:columnNo});
   }
 }
 
@@ -19,7 +18,7 @@ function bindUnhandelrejectionEvt(){
       pushErrorInfo(e.reason,"未处理的 unhandledrejection 事件 --- ");
     }else {
       let message = typeof e.reason === "string"? e.reason : JSON.stringify(e.reason);
-      const error = new UnhandledrejectionNotObjectError(message,"unhandledrejection")
+      const error = new UnhandledrejectionNotObjectError(message)
       pushErrorInfo(error)
     }
   })

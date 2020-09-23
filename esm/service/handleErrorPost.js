@@ -12,10 +12,11 @@ function needMax() {
     const { repeat } = config;
     return typeof repeat === "number" && repeat > 0 ? repeat : -1;
 }
-export function pushErrorInfo(e, str = "", line, col) {
+export function pushErrorInfo(e, str = "", option) {
     const errStr = e + str;
     const { name, message, stack } = e;
-    const errorType = e._errorName || e.constructor && e.constructor.name || "unkonw";
+    const errorType = e._errorName || e.name || "unkonw";
+    let { line, col, other } = option;
     if (!line || !col) {
         const linecol = getStackLineCol(stack);
         if (linecol) {
@@ -31,7 +32,8 @@ export function pushErrorInfo(e, str = "", line, col) {
         errorType,
         time: +new Date(),
         line,
-        col
+        col,
+        other
     };
     const pushInfo = setCacheToMax(errStr, value, needMax());
     if (pushInfo) {

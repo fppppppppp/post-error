@@ -6,7 +6,7 @@ function bindError() {
         if (msg === "Script error." || !url) {
             return;
         }
-        pushErrorInfo(e, "", lineNo, columnNo);
+        pushErrorInfo(e, "", { line: lineNo, col: columnNo });
     };
 }
 function bindUnhandelrejectionEvt() {
@@ -16,7 +16,7 @@ function bindUnhandelrejectionEvt() {
         }
         else {
             let message = typeof e.reason === "string" ? e.reason : JSON.stringify(e.reason);
-            const error = new UnhandledrejectionNotObjectError(message, "unhandledrejection");
+            const error = new UnhandledrejectionNotObjectError(message);
             pushErrorInfo(error);
         }
     });

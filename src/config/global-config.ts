@@ -60,4 +60,5 @@ export interface ConfigOption{
     projectId?: string; // 项目id 
     clientType?: "1"|"2"|"3",
     userId? :string ; // 用户id // 支持后续配置
+    onXMLResponsePostError?: (xhrInstanceStatusText : string)=>boolean ; // 如果存在该函数 并且还会true  会上报数据 主要用于项目自定义是否成功字段。
 }

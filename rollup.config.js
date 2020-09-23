@@ -118,6 +118,7 @@ export default [
     ...bundleConfig,
     output: {
       ...bundleConfig.output,
+      format: 'umd',
       file: 'build/bundle.js',
     },
   },
@@ -125,6 +126,7 @@ export default [
     ...bundleConfig,
     output: {
       ...bundleConfig.output,
+      format: 'umd',
       file: 'build/bundle.min.js',
     },
     // Uglify has to be at the end of compilation, BUT before the license banner
