@@ -1,6 +1,7 @@
 import { servicePath } from "../config/config";
 import { getUserInfo } from "../userinfo/index";
 import { listen } from "../utils/obersve";
+import { version } from '../../package.json';
 let serviceUrl = servicePath;
 listen("changeUrl", (path) => {
     serviceUrl = path;
@@ -20,6 +21,7 @@ function getPostInfo() {
         _ct: clientType,
         _p: projectInfo,
         _fm: href,
+        _v: version
     };
     if (userid) {
         option._uid = userid;

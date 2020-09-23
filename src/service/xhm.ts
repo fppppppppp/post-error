@@ -2,7 +2,17 @@
 import { servicePath } from "../config/config";
 import { getUserInfo,UserInfo } from "../userinfo/index";
 import { listen } from "../utils/obersve";
+import { version } from '../../package.json';
 
+
+export interface PostDataInfo {
+    _uu: string;
+    _ct: string;
+    _p: string;
+    _uid?: string;
+    _fm: string;
+    _v:string;
+}
 
 let serviceUrl = servicePath;
 listen("changeUrl",(path)=>{
@@ -17,21 +27,16 @@ const gifPostApi = function(option: object,type = "er"){
     gif.src = path;
 };
 
-function getPostInfo(): {
-    _uu: string;
-    _ct: string;
-    _p: string;
-    _uid?: string;
-    _fo: string;
-}{
+function getPostInfo(): PostDataInfo{
     let userinfo:UserInfo = getUserInfo();
     const { userid , uid, projectInfo,clientType} = userinfo;
     const { href }  = window.location;
-    let option: any = {
+    let option: PostDataInfo = {
         _uu:uid,
         _ct:clientType,
         _p:projectInfo,
         _fm:href,
+        _v:version
     }
     if(userid){
         option._uid = userid;
@@ -63,3 +68,5 @@ export const xhm = gifPostApi;
 export const postError = function(option: object){
     gifPostApi(option,"er");   
 }
+
+

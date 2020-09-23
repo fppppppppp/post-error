@@ -53,7 +53,7 @@ import typescript from 'rollup-plugin-typescript2';
 // import license from 'rollup-plugin-license';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
-
+import json from 'rollup-plugin-json';
 
 // const commitHash = require('child_process')
 //   .execSync('git rev-parse --short HEAD', { encoding: 'utf-8' })
@@ -89,6 +89,7 @@ const plugins = [
     },
     include: ['*.ts+(|x)', '**/*.ts+(|x)', '../**/*.ts+(|x)'],
   }),
+  json(),
   resolve({
     mainFields: ['module'],
   }),
@@ -132,8 +133,7 @@ export default [
     // Uglify has to be at the end of compilation, BUT before the license banner
     plugins: bundleConfig.plugins
       .slice(0, -1)
-      .concat(terserInstance)
-      .concat(bundleConfig.plugins.slice(-1)),
+      .concat(terserInstance),
   },
   // ------------------
   // ES6 Browser Bundle
@@ -157,7 +157,7 @@ export default [
         },
         include: ['*.ts+(|x)', '**/*.ts+(|x)', '../**/*.ts+(|x)'],
       }),
-      ...plugins.slice(1).concat(bundleConfig.plugins.slice(-1)),
+      ...plugins.slice(1),
     ],
   },
   {
@@ -180,11 +180,8 @@ export default [
         },
         include: ['*.ts+(|x)', '**/*.ts+(|x)', '../**/*.ts+(|x)'],
       }),
-      ...plugins
-        .slice(1)
-        .slice(0, -1)
-        .concat(terserInstance)
-        .concat(bundleConfig.plugins.slice(-1)),
+      ...plugins.slice(1)
+        .concat(terserInstance),
     ],
   },
 

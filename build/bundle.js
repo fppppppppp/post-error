@@ -19,7 +19,7 @@
     }
 
     let userInfo = {
-        clientType: "1"
+        clientType: "1",
     };
     /**
      * 初始化用户个人信息
@@ -345,6 +345,8 @@
         });
     }
 
+    var version = "0.3.0";
+
     let serviceUrl = servicePath;
     listen("changeUrl", (path) => {
         serviceUrl = path;
@@ -364,6 +366,7 @@
             _ct: clientType,
             _p: projectInfo,
             _fm: href,
+            _v: version
         };
         if (userid) {
             option._uid = userid;
