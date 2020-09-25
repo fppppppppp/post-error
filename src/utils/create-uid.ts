@@ -9,5 +9,5 @@ export function uuid() {
     s[8] = s[13] = s[18] = s[23] = "-";
  
     var uuid = s.join("");
-    return uuid;
+    return uuid + "-" + +new Date();
 }
