@@ -15,7 +15,7 @@ function needMax(): number {
   return typeof repeat === "number" && repeat > 0 ? repeat : -1;
 }
 
-export function pushErrorInfo(e?: Error, str: string = "", option?:{line?:number,col?:number,other?: string}) {
+export function pushErrorInfo(e?: Error, str: string = "", option:{line?:number,col?:number,other?: string} = {}) {
   const errStr = e + str;
   const { name, message, stack } = e;
   const errorType =(<any>e)._errorName || e.name || "unkonw";

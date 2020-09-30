@@ -12,7 +12,7 @@ function needMax() {
     const { repeat } = config;
     return typeof repeat === "number" && repeat > 0 ? repeat : -1;
 }
-export function pushErrorInfo(e, str = "", option) {
+export function pushErrorInfo(e, str = "", option = {}) {
     const errStr = e + str;
     const { name, message, stack } = e;
     const errorType = e._errorName || e.name || "unkonw";
