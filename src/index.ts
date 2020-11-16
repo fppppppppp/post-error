@@ -2,7 +2,7 @@
 
 import {setConfig , getSystem ,ConfigOption} from "./config/global-config";
 import {xhm} from "./service/xhm";
-import { setUser} from "./userinfo/index";
+import { setUser , getUserInfo} from "./userinfo/index";
 import { initEvent } from "./bindEvent/index";
 import {initPostError}  from "./service/index";
 
@@ -19,8 +19,18 @@ const config = function(option: ConfigOption){
     initPostError();
 }
 const  setUserId = function(id: string){
-    setUser(id);
-    let sys = getSystem();
+    let sys: any = getSystem();
+    const userInfo = getUserInfo();
+    if(!userInfo.userid){
+        setUser(id);
+    }else{
+        const _ouu = userInfo.uid;
+        this.initUserInfo();
+        sys = {
+            ...sys,
+            _ouu
+        }
+    }
     xhm(sys,"ch");
 }
 

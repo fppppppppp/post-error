@@ -25,7 +25,7 @@ export function getUserInfo(): UserInfo {
   if (!userInfo.uid) {
     initUserInfo();
   }
-  return userInfo;
+  return userInfo; 
 }
 /**
  *
