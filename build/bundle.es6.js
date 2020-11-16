@@ -342,7 +342,7 @@ function trigger(type, ...money) {
     });
 }
 
-var version = "0.3.6";
+var version = "0.4.0";
 
 let serviceUrl = servicePath;
 listen("changeUrl", (path) => {
