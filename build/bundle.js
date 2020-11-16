@@ -345,7 +345,7 @@
         });
     }
 
-    var version = "0.3.2";
+    var version = "0.3.6";
 
     let serviceUrl = servicePath;
     listen("changeUrl", (path) => {
@@ -850,8 +850,16 @@
         initErrorPost();
     };
     const setUserId = function (id) {
-        setUser(id);
         let sys = getSystem();
+        const userInfo = getUserInfo();
+        if (!userInfo.userid) {
+            setUser(id);
+        }
+        else {
+            const _ouu = userInfo.uid;
+            this.initUserInfo();
+            sys = Object.assign(Object.assign({}, sys), { _ouu });
+        }
         xhm(sys, "ch");
     };
 

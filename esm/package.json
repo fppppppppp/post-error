@@ -1,6 +1,6 @@
 {
     "name": "post-error",
-    "version": "0.3.2",
+    "version": "0.3.6",
     "description": "异常监控",
     "private": false,
     "main": "index.js",

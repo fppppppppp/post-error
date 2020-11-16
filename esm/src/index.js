@@ -1,6 +1,6 @@
 import { setConfig, getSystem } from "./config/global-config";
 import { xhm } from "./service/xhm";
-import { setUser } from "./userinfo/index";
+import { setUser, getUserInfo } from "./userinfo/index";
 import { initEvent } from "./bindEvent/index";
 import { initPostError } from "./service/index";
 export { bindPlugin, getPlugin, pluginReact } from "./createPlugin";
@@ -15,8 +15,16 @@ const config = function (option) {
     initPostError();
 };
 const setUserId = function (id) {
-    setUser(id);
     let sys = getSystem();
+    const userInfo = getUserInfo();
+    if (!userInfo.userid) {
+        setUser(id);
+    }
+    else {
+        const _ouu = userInfo.uid;
+        this.initUserInfo();
+        sys = Object.assign(Object.assign({}, sys), { _ouu });
+    }
     xhm(sys, "ch");
 };
 export { config, setUserId };
