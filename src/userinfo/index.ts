@@ -13,7 +13,7 @@ let userInfo: UserInfo = {
 /**
  * 初始化用户个人信息
  */
-function initUserInfo(): void {
+export function initUserInfo(): void {
   const uid = uuid();
   userInfo.uid = uid;
 }

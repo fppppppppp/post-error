@@ -5,7 +5,7 @@ let userInfo = {
 /**
  * 初始化用户个人信息
  */
-function initUserInfo() {
+export function initUserInfo() {
     const uid = uuid();
     userInfo.uid = uid;
 }

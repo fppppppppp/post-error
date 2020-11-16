@@ -345,7 +345,7 @@
         });
     }
 
-    var version = "0.4.0";
+    var version = "0.4.1";
 
     let serviceUrl = servicePath;
     listen("changeUrl", (path) => {
@@ -857,7 +857,7 @@
         }
         else {
             const _ouu = userInfo.uid;
-            this.initUserInfo();
+            initUserInfo();
             sys = Object.assign(Object.assign({}, sys), { _ouu });
         }
         xhm(sys, "ch");
