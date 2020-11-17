@@ -5,4 +5,4 @@
 // } else {
 //   module.exports = require("./build/bundle.min.js");
 // }
-module.exports = require("./dist/index.js");
+module.exports = require("./dist/src/index.js");
