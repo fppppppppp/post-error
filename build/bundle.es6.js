@@ -342,7 +342,7 @@ function trigger(type, ...money) {
     });
 }
 
-var version = "0.4.3";
+var version = "0.4.5";
 
 let serviceUrl = servicePath;
 listen("changeUrl", (path) => {
@@ -565,9 +565,9 @@ function doPost() {
 }
 function loopPostData() {
     const config = getConfig();
-    const { delay } = config;
+    const { delay, mergeReport } = config;
     listen("onErrorPush", () => {
-        if (delay && delay > 0) {
+        if (mergeReport && delay && delay > 0) {
             if (!timer) {
                 timer = setInterval(() => {
                     doPost();
@@ -578,8 +578,8 @@ function loopPostData() {
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                doPost();
             }
+            doPost();
         }
     });
 }
@@ -710,7 +710,7 @@ function bindXMLEvt() {
                 pushErrorInfo(new XHMHttpError(JSON.stringify(errorObj)), "", {
                     line: 0,
                     col: 0,
-                    other: JSON.stringify({ responseData: e.target.responseText.slice(0, 2000) }),
+                    other: e.target.responseText.slice(0, 200),
                 });
             }
         });
@@ -738,9 +738,7 @@ function bindXMLEvt() {
                         pushErrorInfo(new XHMHttpResponseError(JSON.stringify(errorObj)), "", {
                             line: 0,
                             col: 0,
-                            other: JSON.stringify({
-                                responseData: xhrInstance.responseText.slice(0, 2000),
-                            }),
+                            other: xhrInstance.responseText.slice(0, 200),
                         });
                     }
                 }

@@ -36,7 +36,7 @@ export default function bindXMLEvt() {
                 pushErrorInfo(new XHMHttpError(JSON.stringify(errorObj)), "", {
                     line: 0,
                     col: 0,
-                    other: JSON.stringify({ responseData: e.target.responseText.slice(0, 2000) }),
+                    other: e.target.responseText.slice(0, 200),
                 });
             }
         });
@@ -64,9 +64,7 @@ export default function bindXMLEvt() {
                         pushErrorInfo(new XHMHttpResponseError(JSON.stringify(errorObj)), "", {
                             line: 0,
                             col: 0,
-                            other: JSON.stringify({
-                                responseData: xhrInstance.responseText.slice(0, 2000),
-                            }),
+                            other: xhrInstance.responseText.slice(0, 200),
                         });
                     }
                 }

@@ -63,9 +63,9 @@ function doPost() {
 }
 function loopPostData() {
     const config = getConfig();
-    const { delay } = config;
+    const { delay, mergeReport } = config;
     listen("onErrorPush", () => {
-        if (delay && delay > 0) {
+        if (mergeReport && delay && delay > 0) {
             if (!timer) {
                 timer = setInterval(() => {
                     doPost();
@@ -76,8 +76,8 @@ function loopPostData() {
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                doPost();
             }
+            doPost();
         }
     });
 }
