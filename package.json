@@ -1,6 +1,6 @@
 {
   "name": "post-error",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "异常监控",
   "private": false,
   "main": "index.js",
@@ -21,8 +21,7 @@
     "build:esm": "tsc -p ./tsconfig.esm.json",
     "build:esm:watch": "tsc -p ./tsconfig.esm.json -w --preserveWatchOutput",
     "build:watch": "run-p build:dist:watch build:esm:watch build:bundle:watch",
-
-    "publish":"npm version patch && git push && npm publish"
+    "publish": "npm version patch && git push && npm publish"
   },
   "keywords": [
     "error",
