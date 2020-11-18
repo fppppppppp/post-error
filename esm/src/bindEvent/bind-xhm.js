@@ -70,7 +70,7 @@ export default function bindXMLEvt() {
                 }
                 else if (xhrInstance.status === 200 &&
                     onXMLResponsePostError &&
-                    onXMLResponsePostError(xhrInstance.responseText)) {
+                    onXMLResponsePostError(xhrInstance.responseText, xhrInstance)) {
                     const errorObj = {
                         error_msg: JSON.stringify({
                             code: xhrInstance.status,

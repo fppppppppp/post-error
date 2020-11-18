@@ -342,7 +342,7 @@ function trigger(type, ...money) {
     });
 }
 
-var version = "0.4.5";
+var version = "0.4.6";
 
 let serviceUrl = servicePath;
 listen("changeUrl", (path) => {
@@ -744,7 +744,7 @@ function bindXMLEvt() {
                 }
                 else if (xhrInstance.status === 200 &&
                     onXMLResponsePostError &&
-                    onXMLResponsePostError(xhrInstance.responseText)) {
+                    onXMLResponsePostError(xhrInstance.responseText, xhrInstance)) {
                     const errorObj = {
                         error_msg: JSON.stringify({
                             code: xhrInstance.status,

@@ -20,7 +20,9 @@
     "build:dist:watch": "tsc -p ./tsconfig.build.json -w --preserveWatchOutput",
     "build:esm": "tsc -p ./tsconfig.esm.json",
     "build:esm:watch": "tsc -p ./tsconfig.esm.json -w --preserveWatchOutput",
-    "build:watch": "run-p build:dist:watch build:esm:watch build:bundle:watch"
+    "build:watch": "run-p build:dist:watch build:esm:watch build:bundle:watch",
+
+    "publish":"npm version patch && git push && npm publish"
   },
   "keywords": [
     "error",

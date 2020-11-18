@@ -345,7 +345,7 @@
         });
     }
 
-    var version = "0.4.5";
+    var version = "0.4.6";
 
     let serviceUrl = servicePath;
     listen("changeUrl", (path) => {
@@ -747,7 +747,7 @@
                     }
                     else if (xhrInstance.status === 200 &&
                         onXMLResponsePostError &&
-                        onXMLResponsePostError(xhrInstance.responseText)) {
+                        onXMLResponsePostError(xhrInstance.responseText, xhrInstance)) {
                         const errorObj = {
                             error_msg: JSON.stringify({
                                 code: xhrInstance.status,
