@@ -14,7 +14,7 @@ const config = function (option) {
     initEvent();
     initPostError();
 };
-const setUserId = function (id) {
+const setUserId = function (id, info) {
     let sys = getSystem();
     const userInfo = getUserInfo();
     if (!userInfo.userid) {
@@ -24,6 +24,9 @@ const setUserId = function (id) {
         const _ouu = userInfo.uid;
         initUserInfo();
         sys = Object.assign(Object.assign({}, sys), { _ouu });
+    }
+    if (info) {
+        sys.info = info;
     }
     xhm(sys, "ch");
 };

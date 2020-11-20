@@ -342,7 +342,7 @@ function trigger(type, ...money) {
     });
 }
 
-var version = "0.4.6";
+var version = "0.5.0";
 
 let serviceUrl = servicePath;
 listen("changeUrl", (path) => {
@@ -528,7 +528,7 @@ function pushErrorInfo(e, str = "", option = {}) {
     }
     let value = {
         name,
-        message,
+        // message,
         stack,
         errStr,
         errorType,
@@ -592,7 +592,7 @@ class CustomError extends Error {
         super();
         this.message = message;
         this.name = type;
-        this.stack = (new Error()).stack;
+        // this.stack = (new Error()).stack;
     }
 }
 class NetworkRequestError extends CustomError {
@@ -844,7 +844,7 @@ const config = function (option) {
     initEvent();
     initErrorPost();
 };
-const setUserId = function (id) {
+const setUserId = function (id, info) {
     let sys = getSystem();
     const userInfo = getUserInfo();
     if (!userInfo.userid) {
@@ -854,6 +854,9 @@ const setUserId = function (id) {
         const _ouu = userInfo.uid;
         initUserInfo();
         sys = Object.assign(Object.assign({}, sys), { _ouu });
+    }
+    if (info) {
+        sys.info = info;
     }
     xhm(sys, "ch");
 };

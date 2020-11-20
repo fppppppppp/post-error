@@ -26,7 +26,7 @@ export function pushErrorInfo(e, str = "", option = {}) {
     }
     let value = {
         name,
-        message,
+        // message,
         stack,
         errStr,
         errorType,
