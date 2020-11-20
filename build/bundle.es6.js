@@ -342,7 +342,7 @@ function trigger(type, ...money) {
     });
 }
 
-var version = "0.5.0";
+var version = "0.5.1";
 
 let serviceUrl = servicePath;
 listen("changeUrl", (path) => {
@@ -377,7 +377,7 @@ function createUrl(info) {
     for (let i in op) {
         let value = op[i];
         if (typeof value === "object") {
-            value = encodeURIComponent(JSON.stringify(value));
+            value = JSON.stringify(value);
         }
         arr.push(`${i}=${encodeURIComponent(value)}`);
     }

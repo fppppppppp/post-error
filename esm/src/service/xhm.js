@@ -35,7 +35,7 @@ function createUrl(info) {
     for (let i in op) {
         let value = op[i];
         if (typeof value === "object") {
-            value = encodeURIComponent(JSON.stringify(value));
+            value = JSON.stringify(value);
         }
         arr.push(`${i}=${encodeURIComponent(value)}`);
     }
