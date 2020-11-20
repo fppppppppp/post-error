@@ -112,3 +112,4 @@ export default function bindXMLEvt() {
     return nativeAjaxSend.apply(this, args);
   };
 }
+

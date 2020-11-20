@@ -4,7 +4,7 @@ class CustomError extends Error {
     super();
     this.message = message;
     this.name = type;
-    this.stack = (new Error()).stack;
+    // this.stack = (new Error()).stack;
   }
 }
 

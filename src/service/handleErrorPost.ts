@@ -29,7 +29,7 @@ export function pushErrorInfo(e?: Error, str: string = "", option:{line?:number,
   }
   let value = {
     name,
-    message,
+    // message,
     stack,
     errStr,
     errorType,

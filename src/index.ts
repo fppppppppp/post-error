@@ -18,7 +18,7 @@ const config = function(option: ConfigOption){
     initEvent();
     initPostError();
 }
-const  setUserId = function(id: string){
+const  setUserId = function(id: string,info?: any){
     let sys: any = getSystem();
     const userInfo = getUserInfo();
     if(!userInfo.userid){
@@ -30,6 +30,9 @@ const  setUserId = function(id: string){
             ...sys,
             _ouu
         }
+    }
+    if(info){
+        sys.info = info;
     }
     xhm(sys,"ch");
 }
