@@ -79,7 +79,7 @@ export default function bindXMLEvt() {
           }
         } else if (
           xhrInstance.status === 200 &&
-          onXMLResponsePostError &&
+          onXMLResponsePostError &&xhrInstance.responseType.type==="text"&&
           onXMLResponsePostError(xhrInstance.responseText,xhrInstance)
         ) {
           const errorObj = {

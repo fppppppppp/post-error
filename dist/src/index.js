@@ -28,6 +28,8 @@ const setUserId = function (id, info) {
     if (info) {
         sys.info = info;
     }
+    // fix: 配置userid  不在上传基本信息
+    delete sys.inf;
     xhm(sys, "ch");
 };
 export { config, setUserId };

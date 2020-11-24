@@ -345,7 +345,7 @@
         });
     }
 
-    var version = "0.5.1";
+    var version = "0.5.2";
 
     let serviceUrl = servicePath;
     listen("changeUrl", (path) => {
@@ -746,7 +746,7 @@
                         }
                     }
                     else if (xhrInstance.status === 200 &&
-                        onXMLResponsePostError &&
+                        onXMLResponsePostError && xhrInstance.responseType.type === "text" &&
                         onXMLResponsePostError(xhrInstance.responseText, xhrInstance)) {
                         const errorObj = {
                             error_msg: JSON.stringify({
@@ -861,6 +861,8 @@
         if (info) {
             sys.info = info;
         }
+        // fix: 配置userid  不在上传基本信息
+        delete sys.inf;
         xhm(sys, "ch");
     };
 
