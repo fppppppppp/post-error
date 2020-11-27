@@ -345,7 +345,7 @@
         });
     }
 
-    var version = "0.5.3";
+    var version = "0.5.5";
 
     let serviceUrl = servicePath;
     listen("changeUrl", (path) => {
