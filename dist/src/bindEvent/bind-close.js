@@ -1,16 +1,8 @@
-import { getUserInfo } from "../userinfo/index";
-import { postCloseData } from "../service/xhm";
-function getCloseInfo() {
-    const systeminfo = getUserInfo();
-    const { uid } = systeminfo;
-    const blob = new Blob([`_uu=${uid}&_t=${+new Date()}`], { type: 'application/x-www-form-urlencoded' });
-    return blob;
-}
+import { xhm } from "../service/xhm";
 let isPost = false;
 function postData() {
     if (!isPost) {
-        let fb = getCloseInfo();
-        postCloseData(fb);
+        xhm({}, 'ex');
         isPost = true;
     }
 }

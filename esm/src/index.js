@@ -3,6 +3,8 @@ import { xhm } from "./service/xhm";
 import { setUser, getUserInfo, initUserInfo } from "./userinfo/index";
 import { initEvent } from "./bindEvent/index";
 import { initPostError } from "./service/index";
+import { postRouter } from "./bindEvent/bind-route";
+import { track as postClick } from "./bindEvent/bind-track";
 export { bindPlugin, getPlugin, pluginReact } from "./createPlugin";
 /**
  * 配置系统参数
@@ -11,6 +13,7 @@ export { bindPlugin, getPlugin, pluginReact } from "./createPlugin";
  */
 const config = function (option) {
     setConfig(option);
+    xhm(getSystem(), "lo");
     initEvent();
     initPostError();
 };
@@ -32,5 +35,9 @@ const setUserId = function (id, info) {
     delete sys.inf;
     xhm(sys, "ch");
 };
-export { config, setUserId };
+const handTrack = {
+    postRouter,
+    postClick
+};
+export { config, setUserId, handTrack };
 //# sourceMappingURL=index.js.map

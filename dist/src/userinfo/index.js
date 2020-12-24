@@ -1,4 +1,5 @@
-import { uuid } from "../utils/create-uid";
+import { uuid, uuid4 } from "../utils/create-uid";
+import { setLocalStorage, getLocalStorage } from "../utils/localStorage";
 let userInfo = {
     clientType: "1",
 };
@@ -6,7 +7,16 @@ let userInfo = {
  * 初始化用户个人信息
  */
 export function initUserInfo() {
-    const uid = uuid();
+    const postUuid = getLocalStorage("__posterror__uuid");
+    if (postUuid) {
+        userInfo.uuid = postUuid;
+    }
+    else {
+        const id = uuid();
+        userInfo.uuid = id;
+        setLocalStorage("__posterror__uuid", id);
+    }
+    const uid = uuid4();
     userInfo.uid = uid;
 }
 /**

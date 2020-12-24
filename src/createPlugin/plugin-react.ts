@@ -20,7 +20,10 @@ import { pushErrorInfo  } from "../service/handleErrorPost";
 //   }
 // }
 
-export function pluginReact(React: any){
+function pluginReact(React: any):{
+  name:'react',
+  plugin: any
+}{
   class ErrorBoundary extends React.Component{
       constructor(props: any){
         super(props);
@@ -42,4 +45,7 @@ export function pluginReact(React: any){
       name:"react",
       plugin:ErrorBoundary
     }
+}
+export {
+  pluginReact
 }

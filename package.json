@@ -12,7 +12,7 @@
   "homepage": "https://github.com/fppppppppp/post-error/blob/master/README.md",
   "bugs": "https://github.com/fppppppppp/post-error/issues",
   "scripts": {
-    "start": "webpack-dev-server --inline --progress --config ./build/webpack.dev.js --prod 9999 --open",
+    "start": "webpack-dev-server --inline --progress --config ./webpack.config.js --prod 9999 --open",
     "build": "run-s build:dist build:esm build:bundle",
     "build:bundle": "rollup --config",
     "build:bundle:watch": "rollup --config --watch",

@@ -4,8 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>demo</title>
-</head>
-<body>
     
+</head>
+<script src="./build/bundle.js"></script>
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bdee1c480ab4110cf81042b6a3baa410";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+<body>
+    <div class="aa" id="aaa">
+        <a href="#">a</a>
+        <button class="asd">test</button>
+    </div>
 </body>
+
+<script>
+    postError.config({
+        debug:true,
+        delay: 10000, // 上报的时间间隔
+        mergeReport:true, // 是否合并上报
+        repeat: 10,  // 重复多少次 不上报;
+        projectId: "test-test", // 项目id 
+        clientType: "1",
+        autoTrack:true, // 是否全埋点
+        url:"http://222.222.222.23:7001/"
+    })
+
+</script>
+<script>
+    // setInterval(()=>{
+        postError.handTrack.postRouter(location.href,location.href);
+        // a.s();
+    // },2000 )
+</script>
 </html>

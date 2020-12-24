@@ -16,7 +16,7 @@
 //     return this.props.children;
 //   }
 // }
-export function pluginReact(React) {
+function pluginReact(React) {
     class ErrorBoundary extends React.Component {
         constructor(props) {
             super(props);
@@ -40,4 +40,5 @@ export function pluginReact(React) {
         plugin: ErrorBoundary
     };
 }
+export { pluginReact };
 //# sourceMappingURL=plugin-react.js.map

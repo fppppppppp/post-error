@@ -1,14 +1,17 @@
 import { servicePath } from "./config";
 import { setProject, setSystemUser, setClientType } from "../userinfo/index";
 import { getSystemInfo } from "../utils/os-browser";
-import { xhm } from '../service/xhm';
 import { trigger } from "../utils/obersve";
 const defaultConfig = {
     url: servicePath,
     delay: 1000,
     mergeReport: true,
     random: 1,
-    repeat: 20
+    repeat: 20,
+    debug: false,
+    autoTrack: false,
+    notTrackClass: ['mp-no-track'],
+    autoTrackTag: ["input", "button", "a"]
 };
 export function setConfig(option) {
     Object.assign(defaultConfig, option);
@@ -28,7 +31,6 @@ export function setConfig(option) {
     if (clientType) {
         defaultConfig.clientType = clientType;
     }
-    xhm(getSystem(), "lo");
 }
 export function getSystem() {
     const postInfo = {

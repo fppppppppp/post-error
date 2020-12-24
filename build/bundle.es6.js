@@ -14,6 +14,43 @@ function uuid() {
     var uuid = s.join("");
     return uuid + "-" + +new Date();
 }
+function uuid4(len, radix) {
+    var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+    var uuid = [], i;
+    radix = radix || chars.length;
+    if (len) {
+        // Compact form
+        for (i = 0; i < len; i++)
+            uuid[i] = chars[0 | Math.random() * radix];
+    }
+    else {
+        // rfc4122, version 4 form
+        var r;
+        // rfc4122 requires these characters
+        uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+        uuid[14] = '4';
+        // Fill in random data.  At i==19 set the high bits of clock sequence as
+        // per rfc4122, sec. 4.1.5
+        for (i = 0; i < 36; i++) {
+            if (!uuid[i]) {
+                r = 0 | Math.random() * 16;
+                uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+            }
+        }
+    }
+    var uid = uuid.join('');
+    return uid + "-" + +new Date();
+}
+
+const getLocalStorage = function (key) {
+    if (!key) {
+        throw new Error("please input LocalStorage key");
+    }
+    return localStorage.getItem(key) || null;
+};
+const setLocalStorage = function (key, value) {
+    localStorage.setItem(key, value);
+};
 
 let userInfo = {
     clientType: "1",
@@ -22,7 +59,16 @@ let userInfo = {
  * 初始化用户个人信息
  */
 function initUserInfo() {
-    const uid = uuid();
+    const postUuid = getLocalStorage("__posterror__uuid");
+    if (postUuid) {
+        userInfo.uuid = postUuid;
+    }
+    else {
+        const id = uuid();
+        userInfo.uuid = id;
+        setLocalStorage("__posterror__uuid", id);
+    }
+    const uid = uuid4();
     userInfo.uid = uid;
 }
 /**
@@ -342,63 +388,16 @@ function trigger(type, ...money) {
     });
 }
 
-var version = "0.5.5";
-
-let serviceUrl = servicePath;
-listen("changeUrl", (path) => {
-    serviceUrl = path;
-});
-const gifPostApi = function (option, type = "er") {
-    const gif = document.createElement("img");
-    const postOption = createUrl(Object.assign(Object.assign({}, option), { _te: type }));
-    const path = serviceUrl + "pr/e.gif" + postOption;
-    gif.src = path;
-};
-function getPostInfo() {
-    let userinfo = getUserInfo();
-    const { userid, uid, projectInfo, clientType } = userinfo;
-    const { href } = window.location;
-    let option = {
-        _uu: uid,
-        _ct: clientType,
-        _p: projectInfo,
-        _fm: href,
-        _v: version
-    };
-    if (userid) {
-        option._uid = userid;
-    }
-    return option;
-}
-function createUrl(info) {
-    let arr = [];
-    const deInfo = getPostInfo();
-    const op = Object.assign(Object.assign({}, info), deInfo);
-    for (let i in op) {
-        let value = op[i];
-        if (typeof value === "object") {
-            value = JSON.stringify(value);
-        }
-        arr.push(`${i}=${encodeURIComponent(value)}`);
-    }
-    arr.push("_t=" + +new Date());
-    return "?" + arr.join("&");
-}
-const postCloseData = function (fb) {
-    let url = serviceUrl + "cl";
-    navigator.sendBeacon(url, fb);
-};
-const xhm = gifPostApi;
-const postError = function (option) {
-    gifPostApi(option, "er");
-};
-
 const defaultConfig = {
     url: servicePath,
     delay: 1000,
     mergeReport: true,
     random: 1,
-    repeat: 20
+    repeat: 20,
+    debug: false,
+    autoTrack: false,
+    notTrackClass: ['mp-no-track'],
+    autoTrackTag: ["input", "button", "a"]
 };
 function setConfig(option) {
     Object.assign(defaultConfig, option);
@@ -418,7 +417,6 @@ function setConfig(option) {
     if (clientType) {
         defaultConfig.clientType = clientType;
     }
-    xhm(getSystem(), "lo");
 }
 function getSystem() {
     const postInfo = {
@@ -432,17 +430,166 @@ function getConfig() {
     return defaultConfig;
 }
 
-function getCloseInfo() {
-    const systeminfo = getUserInfo();
-    const { uid } = systeminfo;
-    const blob = new Blob([`_uu=${uid}&_t=${+new Date()}`], { type: 'application/x-www-form-urlencoded' });
+var version = "0.5.5";
+
+function ajax(options) {
+    options = options || {}; //调用函数时如果options没有指定，就给它赋值{},一个空的Object
+    options.type = (options.type || "GET").toUpperCase(); /// 请求格式GET、POST，默认为GET
+    options.dataType = options.dataType || "json"; //响应数据格式，默认json
+    var params = formatParams(options.data); //options.data请求的数据
+    var xhr = new XMLHttpRequest();
+    //启动并发送一个请求
+    if (options.type == "GET") {
+        xhr.open("GET", options.url + "?" + params, true);
+        xhr.send(null);
+    }
+    else if (options.type == "POST") {
+        xhr.open("post", options.url, true);
+        //设置表单提交时的内容类型
+        //Content-type数据请求的格式
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send(params);
+    }
+    var timer = null;
+    //    设置有效时间
+    options.timeout && (timer = setTimeout(function () {
+        if (xhr.readyState != 4) {
+            xhr.abort();
+        }
+    }, options.timeout));
+    //    接收
+    //     options.success成功之后的回调函数  options.error失败后的回调函数
+    //xhr.responseText,xhr.responseXML  获得字符串形式的响应数据或者XML形式的响应数据
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+            options.timeout && clearTimeout(timer);
+            var status = xhr.status;
+            if (status >= 200 && status < 300 || status == 304) {
+                options.success && options.success(xhr.responseText, xhr);
+            }
+            else {
+                options.error && options.error(status, xhr);
+            }
+        }
+    };
+}
+//格式化请求参数
+function formatParams(data) {
+    var arr = [];
+    for (var name in data) {
+        arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]));
+    }
+    arr.push(("v=" + Math.random()).replace(".", ""));
+    return arr.join("&");
+}
+
+let serviceUrl = servicePath;
+listen("changeUrl", (path) => {
+    serviceUrl = path;
+});
+const gifPostApi = function (url) {
+    const gif = document.createElement("img");
+    // const postOption = createUrl({...option,_te:type});
+    const path = serviceUrl + "pr/e.gif?" + url;
+    gif.src = path;
+};
+const postApi = function (option, type = "er") {
+    const debug = getConfig().debug;
+    const gifUrl = createUrl(Object.assign(Object.assign({}, option), { _te: type }));
+    // 如果浏览器支持sendBeacon 优先使用 
+    if (navigator && navigator.sendBeacon) {
+        const bobl = getSendBeaconInfo(gifUrl);
+        navigator.sendBeacon(serviceUrl + 'pr/', bobl);
+    }
+    else {
+        // 降级 如果内容大于5000条 用post  否则采用图片上传
+        if (gifUrl.length > 5000) {
+            ajax({
+                url: serviceUrl + 'pr/',
+                type: "POST",
+                data: getPostOption(Object.assign(Object.assign({}, option), { _te: type }))
+            });
+        }
+        else {
+            gifPostApi(gifUrl);
+        }
+    }
+    if (debug) {
+        console.log(`发送了一次请求，类型为${getTypeName(type)}; 参数为`, getPostOption(Object.assign(Object.assign({}, option), { _te: type })));
+    }
+};
+function getPostInfo() {
+    let userinfo = getUserInfo();
+    const { userid, uid, projectInfo, clientType, uuid } = userinfo;
+    const { href } = window.location;
+    let option = {
+        "_u": uuid,
+        '_uu': uid,
+        '_ct': clientType,
+        '_p': projectInfo,
+        '_fm': href,
+        '_v': version,
+        '_tm': performance ? performance.now() : 0,
+        _tit: document.title
+    };
+    if (userid) {
+        option._uid = userid;
+    }
+    return option;
+}
+function getPostOption(info) {
+    const deInfo = getPostInfo();
+    const op = Object.assign(Object.assign({}, info), deInfo);
+    for (let i in op) {
+        let value = op[i];
+        if (typeof value === "object") {
+            value = JSON.stringify(value);
+        }
+        op[i] = value;
+    }
+    // arr.push("_t="+  +new Date())
+    op._t = +new Date();
+    return op;
+}
+function createUrl(info) {
+    const opt = getPostOption(info);
+    let arr = [];
+    for (let i in opt) {
+        arr.push(`${i}=${encodeURIComponent(opt[i])}`);
+    }
+    return arr.join("&");
+}
+function getSendBeaconInfo(url) {
+    const blob = new Blob([url], { type: 'application/x-www-form-urlencoded' });
     return blob;
 }
+const xhm = postApi;
+const postError = function (option) {
+    postApi(option, "er");
+};
+function getTypeName(type) {
+    switch (type) {
+        case "lo":
+            return "登录";
+        case "er":
+            return "异常";
+        case "ex":
+            return "退出";
+        case "ch":
+            return "修改用户数据";
+        case "pe":
+            return "上传页面性能";
+        case "cl":
+            return "页面点击事件";
+        case "ro":
+            return "路由切换";
+    }
+}
+
 let isPost = false;
 function postData() {
     if (!isPost) {
-        let fb = getCloseInfo();
-        postCloseData(fb);
+        xhm({}, 'ex');
         isPost = true;
     }
 }
@@ -772,10 +919,125 @@ function bindXMLEvt() {
     };
 }
 
+const bindLoad = function () {
+    window.addEventListener("load", () => {
+        const performance = window.performance;
+        xhm({ performance }, 'pe');
+    });
+};
+
+const autoTrack = function () {
+    document.body.addEventListener("click", (e) => {
+        let target = e.target;
+        if (target.nodeType === Node.TEXT_NODE) {
+            target = target.parentNode;
+        }
+        if (shouldAutoTrackDomEvent(target, e)) {
+            track(e);
+        }
+    });
+};
+const track = function (target, check = true) {
+    // 如果满足监测条件，那么从当前标签开始，向上追溯到body标签，并记录这条路径上所有的元素到一个数组中
+    if (target.nodeType === Node.TEXT_NODE) {
+        target = target.parentNode;
+    }
+    let postOtpion;
+    var targetElementList = [target];
+    var curEl = target;
+    while (curEl.parentNode && !(curEl.tagName.toLowerCase() === 'body')) {
+        targetElementList.push(curEl.parentNode);
+        curEl = curEl.parentNode;
+    }
+    // 按照刚才记录的路径开始遍历（相当于自底向上）
+    var href, elements = [];
+    const noTrackClass = getConfig().notTrackClass;
+    for (let i = 0; i < targetElementList.length; i++) {
+        const el = targetElementList[i];
+        if (el.tagName.toLowerCase() === 'a') {
+            href = el.getAttribute('href') || "";
+        }
+        // allow users to programatically prevent tracking of elements by adding class 'mp-no-track'
+        // 如果不希望某个节点被监测，开发者可以设置一个名为`mp-no-track`的css class
+        var classes = el.className && el.className.split(" ") || [];
+        if (classes.filter((val) => noTrackClass.includes(val)).length) {
+            return false;
+        }
+        elements.push(el.nodeName && (el.nodeName.toLocaleLowerCase() + (el.id ? "#" + el.id : "") + classes.map(e => '.' + e).join(" .")));
+    }
+    // 处理采集到的属性，这里面有几个getXXXProperties(element/elements)方法（_getPropertiesFromElement、_getDefaultProperties、_getCustomProperties、_getFormFieldProperties），就是在读取各种属性
+    postOtpion = {
+        elements,
+        target_text: target.textContent.slice(0, 255),
+        a_href: href,
+        info: target.getAttribute("data-track") || '',
+        tag_name: target.tagName.toLowerCase(),
+        element_path: elements.reverse().join(' '),
+        track_id: target.getAttribute("data-track-id") || '',
+    };
+    xhm(postOtpion, 'cl');
+    return true;
+};
+// _trackEvent之前，需要判断标签上的发生的事件是不是应该被autotrack监测上报
+function shouldAutoTrackDomEvent(element, event) {
+    const config = getConfig();
+    // html根节点下面的事件不需要监测
+    if (!element || element.tagName.toLowerCase() === 'HTML' || element.nodeType !== Node.ELEMENT_NODE) {
+        return false;
+    }
+    if (element.getAttribute("data-track-id")) {
+        return true;
+    }
+    var tag = element.tagName.toLowerCase();
+    // 如果是自动上传
+    if (config.autoTrack && !config.autoTrackTag.includes(tag)) {
+        return false;
+    }
+    // 查看标签的名字
+    // 如果是html则不监听
+    // 如果是form标签下的submit事件，或者是input->button、input->submit标签的change、click事件，或者是select、textarea标签下的change、click事件，可以监听
+    // 如果是其他标签，监听click事件
+    switch (tag) {
+        case 'html':
+            return false;
+        case 'form':
+            return event.type === 'submit';
+        case 'input':
+            if (['button', 'submit'].indexOf(element.getAttribute('type')) === -1) {
+                return event.type === 'change';
+            }
+            else {
+                return event.type === 'click';
+            }
+        case 'select':
+        case 'textarea':
+            return event.type === 'change';
+        default:
+            return event.type === 'click';
+    }
+}
+
+// import { getConfig} from "@/config/global-config";
 function initEvent() {
     bindBeforeunload();
     initBindEvent();
     bindXMLEvt();
+    bindLoad();
+    autoTrack();
+}
+
+let time = 0;
+let init = true;
+function postRouter(from, to) {
+    const now = performance.now();
+    xhm({
+        router_from: from,
+        router_to: to,
+        router_times: now - time,
+        first: init
+    }, "ro");
+    time = now;
+    init = false;
 }
 
 // export class ErrorBoundary extends Component{
@@ -841,6 +1103,7 @@ function getPlugin(name) {
  */
 const config = function (option) {
     setConfig(option);
+    xhm(getSystem(), "lo");
     initEvent();
     initErrorPost();
 };
@@ -862,10 +1125,15 @@ const setUserId = function (id, info) {
     delete sys.inf;
     xhm(sys, "ch");
 };
+const handTrack = {
+    postRouter,
+    postClick: track
+};
 
 exports.bindPlugin = bindPlugin;
 exports.config = config;
 exports.getPlugin = getPlugin;
+exports.handTrack = handTrack;
 exports.pluginReact = pluginReact;
 exports.setUserId = setUserId;
 //# sourceMappingURL=bundle.es6.js.map
