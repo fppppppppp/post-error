@@ -36,7 +36,7 @@ export default function bindXMLEvt() {
                 pushErrorInfo(new XHMHttpError(JSON.stringify(errorObj)), "", {
                     line: 0,
                     col: 0,
-                    other: e.target.responseText.slice(0, 200),
+                    other: xhrInstance.responseType.type === "text" && xhrInstance.responseText.slice(0, 2000) || 'arraybuffer',
                 });
             }
         });
@@ -64,7 +64,7 @@ export default function bindXMLEvt() {
                         pushErrorInfo(new XHMHttpResponseError(JSON.stringify(errorObj)), "", {
                             line: 0,
                             col: 0,
-                            other: xhrInstance.responseText.slice(0, 200),
+                            other: xhrInstance.responseType.type === "text" && xhrInstance.responseText.slice(0, 2000) || 'arraybuffer',
                         });
                     }
                 }
@@ -86,7 +86,7 @@ export default function bindXMLEvt() {
                             line: 0,
                             col: 0,
                             other: JSON.stringify({
-                                responseData: xhrInstance.responseText.slice(0, 2000),
+                                responseData: xhrInstance.responseType.type === "text" && xhrInstance.responseText.slice(0, 2000) || 'arraybuffer',
                             }),
                         });
                     }
