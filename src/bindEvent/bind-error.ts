@@ -1,51 +1,58 @@
 
-import { pushErrorInfo }  from "../service/handleErrorPost";
-import { NetworkRequestError ,UnhandledrejectionNotObjectError}  from "../error-types";
+import { pushErrorInfo } from "../service/handleErrorPost";
+import { NetworkRequestError, UnhandledrejectionNotObjectError } from "../error-types";
 import { fill } from "../utils/object";
 
-function bindError(){
-  window.onerror=function(msg,url,lineNo,columnNo,e){
-    if(msg==="Script error." || !url){
+function bindError() {
+  window.onerror = function (msg, url, lineNo, columnNo, e) {
+    if (msg === "Script error." || !url) {
       return
     }
-    pushErrorInfo(e,"",{line:lineNo,col:columnNo});
+    pushErrorInfo(e, "", { line: lineNo, col: columnNo });
   }
 }
 
-function bindUnhandelrejectionEvt(){
-  window.addEventListener("unhandledrejection",(e)=>{
-    if(typeof e.reason === "object"){
-      pushErrorInfo(e.reason,"未处理的 unhandledrejection 事件 --- ");
-    }else {
-      let message = typeof e.reason === "string"? e.reason : JSON.stringify(e.reason);
+function bindUnhandelrejectionEvt() {
+  window.addEventListener("unhandledrejection", (e) => {
+    if (typeof e.reason === "object") {
+      pushErrorInfo(e.reason, "未处理的 unhandledrejection 事件 --- ");
+    } else {
+      let message = typeof e.reason === "string" ? e.reason : JSON.stringify(e.reason);
       const error = new UnhandledrejectionNotObjectError(message)
       pushErrorInfo(error)
     }
   })
 }
-function bindErrorEvt(){
-  window.addEventListener('error', event => {  
+function bindErrorEvt() {
+  window.addEventListener('error', event => {
     let error = null;
-    if(event.target instanceof HTMLScriptElement){
-      error = new NetworkRequestError(event.target.src,"LoadScriptError")
+    if (event.target instanceof HTMLScriptElement) {
+      error = new NetworkRequestError(event.target.src, "LoadScriptError")
     }
-    if(event.target instanceof HTMLLinkElement){
-      error = new NetworkRequestError(event.target.href,"LoadLinkError")
+    if (event.target instanceof HTMLLinkElement) {
+      error = new NetworkRequestError(event.target.href, "LoadLinkError" + "-" + event.target)
     }
-    if(event.target instanceof HTMLImageElement){
-      error = new NetworkRequestError(event.target.src,"LoadLinktError")
+    const target = event.target
+    if (target instanceof HTMLImageElement ||
+      target instanceof HTMLEmbedElement ||
+      target instanceof HTMLInputElement ||   // <input type="image" src="">
+      target instanceof HTMLAudioElement ||
+      target instanceof HTMLVideoElement ||
+      target instanceof HTMLSourceElement
+    ) {
+      error = new NetworkRequestError(target.src, "LoadLinktError" + "-" + event.target)
     }
-    error && pushErrorInfo(error); 
-  },true); 
-  
+    error && pushErrorInfo(error);
+  }, true);
+
 }
 
-function bindTryCatchEvt(){
+function bindTryCatchEvt() {
   const proto = EventTarget.prototype;
-  fill(proto, 'addEventListener', function(
+  fill(proto, 'addEventListener', function (
     original: () => void,
   ): (eventName: string, fn: EventListenerObject, options?: boolean | AddEventListenerOptions) => void {
-    return function(
+    return function (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this: any,
       eventName: string,
@@ -65,16 +72,16 @@ function bindTryCatchEvt(){
       return original.call(
         this,
         eventName,
-        fn.__error_wrapped__|| fn,
+        fn.__error_wrapped__ || fn,
         options,
       );
     };
   });
 
-  fill(proto, 'removeEventListener', function(
+  fill(proto, 'removeEventListener', function (
     original: () => void,
   ): (this: any, eventName: string, fn: EventListenerObject, options?: boolean | EventListenerOptions) => () => void {
-    return function(
+    return function (
       this: any,
       eventName: string,
       fn: EventListenerObject,
@@ -120,20 +127,20 @@ function bindTryCatchEvt(){
   // }
 }
 
-function bindVueEvt(){
-  if(!window.Vue || !window.Vue.config){
-    return ;
+function bindVueEvt() {
+  if (!window.Vue || !window.Vue.config) {
+    return;
   }
   let _oldOnError = window.Vue.config.errorHandler;
-  window.Vue.config.errorHandler = function (errMsg: Error,vm: any,info: any){
-    pushErrorInfo(errMsg); 
-    if(typeof _oldOnError === "function"){
-      _oldOnError.call(this,errMsg,vm,info)
+  window.Vue.config.errorHandler = function (errMsg: Error, vm: any, info: any) {
+    pushErrorInfo(errMsg);
+    if (typeof _oldOnError === "function") {
+      _oldOnError.call(this, errMsg, vm, info)
     }
   }
 }
 
-export function initBindEvent(){
+export function initBindEvent() {
   bindError();
   bindUnhandelrejectionEvt();
   bindErrorEvt();
